@@ -1,0 +1,23 @@
+{
+  "name": "astro-markdown-vault",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "bun content && astro build",
+    "preview": "bun content && astro preview",
+    "astro": "astro",
+    "content:copy": "bun scripts/copy.ts",
+    "content:sync": "bun scripts/sync.ts",
+    "content:watch": "bun scripts/watch.ts",
+    "deploy": "bun content && bun sync"
+  },
+  "dependencies": {
+    "astro": "^5.1.9",
+    "zod": "^3.22.4",
+    "gray-matter": "^4.0.3"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2"
+  }
+}
