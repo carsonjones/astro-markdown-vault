@@ -1,6 +1,6 @@
-import { watch } from 'chokidar';
 import { homedir } from 'node:os';
 import { $ } from 'bun';
+import { watch } from 'chokidar';
 
 if (!Bun.env.WATCH_INTERVAL_MINUTES) {
   throw new Error('WATCH_INTERVAL_MINUTES environment variable is not set');
@@ -28,10 +28,7 @@ class SyncScheduler {
   constructor() {
     // Log startup
     console.log('Starting watch process...');
-    console.log(`Watching ${config.contentDir}`);
-    console.log(
-      `Will sync after ${config.debounceTime / 1000} seconds of no changes`,
-    );
+    console.log(`Watching ${config.contentDir} every ${config.debounceTime / 1000} seconds`);
   }
 
   async runSync() {
@@ -48,7 +45,7 @@ class SyncScheduler {
       await $`bun run content:sync`;
 
       this.lastSync = new Date();
-      console.log(`Watch completed at ${this.lastSync.toLocaleString()}`);
+      console.log(`Sync completed at ${this.lastSync.toLocaleString()}`);
 
       // Schedule next sync after completion
       this.scheduleSync();
@@ -70,9 +67,7 @@ class SyncScheduler {
       this.runSync();
     }, config.debounceTime);
 
-    console.log(
-      `Sync scheduled for ${new Date(Date.now() + config.debounceTime).toLocaleString()}`,
-    );
+    console.log(`Sync scheduled for ${new Date(Date.now() + config.debounceTime).toLocaleString()}`);
   }
 
   handleFileChange(path: string) {
@@ -97,9 +92,9 @@ const watcher = watch(config.contentDir, {
 
 // Watch for changes
 watcher
-  .on('add', path => scheduler.handleFileChange(path))
-  .on('change', path => scheduler.handleFileChange(path))
-  .on('unlink', path => scheduler.handleFileChange(path));
+  .on('add', (path) => scheduler.handleFileChange(path))
+  .on('change', (path) => scheduler.handleFileChange(path))
+  .on('unlink', (path) => scheduler.handleFileChange(path));
 
 // Handle process termination
 process.on('SIGINT', () => {

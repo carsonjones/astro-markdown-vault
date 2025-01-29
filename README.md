@@ -21,7 +21,9 @@ Copy the `.env.example` file as `.env` and add your variables.
 | :------------------------ | :----------------------------------------------- |
 | `bun install`             | Install dependencies                             |
 | `bun dev`                 | Runs Astro server on http://localhost:4321       |
+| `bun content:dev`         | Syncs content on changes for local dev           |
 | `bun content:copy`        | Copy from your vault to site                     |
+| `bun content:assets`      | Copy images from your vault to site              |
 | `bun content:watch`       | Start background watch + sync service            |
 
 

@@ -7,9 +7,11 @@
     "build": "bun content && astro build",
     "preview": "bun content && astro preview",
     "astro": "astro",
+    "content:assets": "bun scripts/assets.ts",
     "content:copy": "bun scripts/copy.ts",
     "content:sync": "bun scripts/sync.ts",
     "content:watch": "bun scripts/watch.ts",
+    "content:dev": "bun scripts/dev.ts",
     "deploy": "bun content && bun sync"
   },
   "dependencies": {

@@ -1,14 +1,14 @@
-import matter from 'gray-matter';
+import { existsSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { existsSync } from 'node:fs';
-import { type Post, PostSchema } from '@/utils/types';
+import matter from 'gray-matter';
+import { PostSchema, type Post } from '@/utils/types';
 
 async function getAllFiles(dir: string): Promise<string[]> {
   const entries = await readdir(dir, { withFileTypes: true });
   const files = await Promise.all(
-    entries.map(async entry => {
+    entries.map(async (entry) => {
       const path = join(dir, entry.name);
       if (entry.isDirectory()) {
         return getAllFiles(path);
@@ -39,9 +39,7 @@ async function main() {
 
   await Bun.write(Bun.file(`${Bun.env.POSTS_DIR}/.gitkeep`), '');
   const files = await getAllFiles(notesDir);
-  const mdFiles = files.filter(
-    (file: string) => file.endsWith('.md') || file.endsWith('.mdx'),
-  );
+  const mdFiles = files.filter((file: string) => file.endsWith('.md') || file.endsWith('.mdx'));
 
   for (const file of mdFiles) {
     const content = await Bun.file(file).text();
@@ -68,10 +66,8 @@ async function main() {
       let existingFrontmatter = {} as Post;
       if (!isNewFile) {
         const existingContent = await Bun.file(targetPath).text();
-        const { content: existingMarkdownContent, data: existingData } =
-          matter(existingContent);
-        contentChanged =
-          existingMarkdownContent.trim() !== markdownContent.trim();
+        const { content: existingMarkdownContent, data: existingData } = matter(existingContent);
+        contentChanged = existingMarkdownContent.trim() !== markdownContent.trim();
         existingFrontmatter = existingData as Post;
       }
 
@@ -84,22 +80,15 @@ async function main() {
           ? new Date().toISOString()
           : existingFrontmatter.updatedAt || new Date().toISOString(),
         createdAt:
-          isNewFile || !existingFrontmatter.createdAt
-            ? new Date().toISOString()
-            : existingFrontmatter.createdAt,
+          isNewFile || !existingFrontmatter.createdAt ? new Date().toISOString() : existingFrontmatter.createdAt,
       };
 
       // Validate that no values are undefined before stringifying
       const cleanFrontmatter = Object.fromEntries(
-        Object.entries(updatedFrontmatter).filter(
-          ([_, value]) => value !== undefined,
-        ),
+        Object.entries(updatedFrontmatter).filter(([_, value]) => value !== undefined),
       );
 
-      const updatedContent = matter.stringify(
-        markdownContent,
-        cleanFrontmatter,
-      );
+      const updatedContent = matter.stringify(markdownContent, cleanFrontmatter);
 
       await Bun.write(targetPath, updatedContent);
       console.log(`Processed ${file.replace(homedir(), '~')} -> ${targetPath}`);
@@ -109,7 +98,7 @@ async function main() {
   }
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error('Content collect failed:', error);
   process.exit(1);
 });

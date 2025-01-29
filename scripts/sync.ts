@@ -23,7 +23,7 @@ async function commitAndPush() {
     await $`git add .`;
 
     // Create commit
-    await $`git commit --author="Astro Markdown Vault <bot@example.com>" -m ${`Content sync: ${timestamp}`}`;
+    await $`git commit -m ${`Content sync: ${timestamp}`}`;
 
     // Push changes
     await $`git push`;
@@ -38,8 +38,12 @@ async function commitAndPush() {
 async function main() {
   try {
     // Run content sync
-    console.log('Running copy process...');
+    console.log('Running content copy process...');
     await $`bun run content:copy`;
+
+    // Run asset sync
+    console.log('Running asset copy process...');
+    await $`bun run content:assets`;
 
     // Check for changes
     const hasChanges = await hasGitChanges();
@@ -57,7 +61,7 @@ async function main() {
 }
 
 // Run the sync process
-main().catch(error => {
+main().catch((error) => {
   console.error('Sync process failed:', error);
   process.exit(1);
 });
